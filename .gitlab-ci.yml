@@ -9,8 +9,8 @@ pages:
   - mv build public
   artifacts:
     paths:
-    - public # mandatory, other folder won't work
+    - public
   only:
-  - master # or dev, the branch you want to publish
+  - master
   variables:
     PUBLIC_URL: "/assessment---todo-app-part-2" # slash is important
