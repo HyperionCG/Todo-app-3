@@ -3,6 +3,8 @@ import "./index.css";
 import todosList from "./todos.json";
 import { Route, NavLink } from "react-router-dom";
 import TodoList from "./TodoList";
+import { connect } from "react-redux";
+import { addTodo } from "./actions";
 
 class App extends Component {
   state = {
@@ -18,32 +20,13 @@ class App extends Component {
 
   handleCreate = event => {
     if (event.key === "Enter") {
-      const newTodoList = this.state.todos.slice();
-      newTodoList.push({
-        userId: 1,
-        id: Math.floor(Math.random() * 100),
-        title: this.state.value,
-        completed: false
-      });
-      this.setState({ todos: newTodoList, value: "" });
+      this.props.addTodo(this.state.value);
+      this.setState({ value: "" })
     }
   };
 
   handleChange = event => {
     this.setState({ value: event.target.value });
-  };
-
-  handleToggle = todoIdToToggle => {
-    const newTodoList = this.state.todos.map(todo => {
-      if (todo.id === todoIdToToggle) {
-        const newTodo = { ...todo };
-        newTodo.completed = !newTodo.completed;
-        return newTodo;
-      }
-      //
-      return todo;
-    });
-    this.setState({ todos: newTodoList });
   };
 
   handleClearCompleted = () => {
@@ -77,7 +60,7 @@ class App extends Component {
             <TodoList
               handleToggle={this.handleToggle}
               handleDelete={this.handleDelete}
-              todos={this.state.todos}
+              todos={this.props.todos}
             />
           )}
         />
@@ -87,7 +70,7 @@ class App extends Component {
             <TodoList
               handleToggle={this.handleToggle}
               handleDelete={this.handleDelete}
-              todos={this.state.todos.filter(todo => todo.completed === false)}
+              todos={this.props.todos.filter(todo => todo.completed === false)}
             />
           )}
         />
@@ -97,14 +80,14 @@ class App extends Component {
             <TodoList
               handleToggle={this.handleToggle}
               handleDelete={this.handleDelete}
-              todos={this.state.todos.filter(todo => todo.completed === true)}
+              todos={this.props.todos.filter(todo => todo.completed === true)}
             />
           )}
         />
         <footer className="footer">
           {/* <!-- This should be `0 items left` by default --> */}
           <span className="todo-count">
-            <strong> {this.state.todos.filter(todo => todo.completed === false ).length} </strong> item(s) left
+            <strong> {this.props.todos.filter(todo => todo.completed === false ).length} </strong> item(s) left
           </span>
           <ul className="filters">
             <li>
@@ -123,5 +106,18 @@ class App extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    todos: state.todos
+  };
+};
 
-export default App;
+const mapDispatchToProps = {
+  addTodo
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+  )(App);
+
